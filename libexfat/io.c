@@ -274,7 +274,11 @@ off_t exfat_get_size(const struct exfat_dev* dev)
 
 off_t exfat_seek(struct exfat_dev* dev, off_t offset, int whence)
 {
+#if defined(__ANDROID__)
+	return lseek64(dev->fd, offset, whence);
+#else
 	return lseek(dev->fd, offset, whence);
+#endif
 }
 
 ssize_t exfat_read(struct exfat_dev* dev, void* buffer, size_t size)
@@ -290,13 +294,21 @@ ssize_t exfat_write(struct exfat_dev* dev, const void* buffer, size_t size)
 ssize_t exfat_pread(struct exfat_dev* dev, void* buffer, size_t size,
 		off_t offset)
 {
+#if defined(__ANDROID__)
+	return pread64(dev->fd, buffer, size, offset);
+#else
 	return pread(dev->fd, buffer, size, offset);
+#endif
 }
 
 ssize_t exfat_pwrite(struct exfat_dev* dev, const void* buffer, size_t size,
 		off_t offset)
 {
+#if defined(__ANDROID__)
+	return pwrite64(dev->fd, buffer, size, offset);
+#else
 	return pwrite(dev->fd, buffer, size, offset);
+#endif
 }
 
 ssize_t exfat_generic_pread(const struct exfat* ef, struct exfat_node* node,

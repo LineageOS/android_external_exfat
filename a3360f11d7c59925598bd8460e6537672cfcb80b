@@ -16,6 +16,24 @@
       "revId": "a3360f11d7c59925598bd8460e6537672cfcb80b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fce034c_c1d6a650",
+        "filename": "fuse/main.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 7003
+      },
+      "writtenOn": "2016-01-05T12:11:31Z",
+      "side": 1,
+      "message": "Thanks, I didn\u0027t check to see if they were using C99. It turns out they are and stdbool.h is already included in libexfat/exfat.h. I\u0027ve uploaded patch set 2 with the changes.",
+      "parentUuid": "3fce034c_1ecbab53",
+      "revId": "a3360f11d7c59925598bd8460e6537672cfcb80b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }

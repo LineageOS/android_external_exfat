@@ -3,7 +3,7 @@
 	exFAT file system implementation library.
 
 	Free exFAT implementation.
-	Copyright (C) 2010-2016  Andrew Nayenko
+	Copyright (C) 2010-2017  Andrew Nayenko
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void exfat_closedir(struct exfat* ef, struct exfat_iterator* it)
 	it->current = NULL;
 }
 
-struct exfat_node* exfat_readdir(struct exfat* ef, struct exfat_iterator* it)
+struct exfat_node* exfat_readdir(struct exfat_iterator* it)
 {
 	if (it->current == NULL)
 		it->current = it->parent->child;
@@ -87,14 +87,14 @@ static int lookup_name(struct exfat* ef, struct exfat_node* parent,
 
 	*node = NULL;
 
-	rc = utf8_to_utf16(buffer, name, EXFAT_NAME_MAX, n);
+	rc = utf8_to_utf16(buffer, name, EXFAT_NAME_MAX + 1, n);
 	if (rc != 0)
 		return rc;
 
 	rc = exfat_opendir(ef, parent, &it);
 	if (rc != 0)
 		return rc;
-	while ((*node = exfat_readdir(ef, &it)))
+	while ((*node = exfat_readdir(&it)))
 	{
 		if (compare_name(ef, buffer, (*node)->name) == 0)
 		{
@@ -195,7 +195,7 @@ int exfat_split(struct exfat* ef, struct exfat_node** parent,
 				exfat_put_node(ef, *parent);
 				return -ENOENT;
 			}
-			rc = utf8_to_utf16(name, p, EXFAT_NAME_MAX, n);
+			rc = utf8_to_utf16(name, p, EXFAT_NAME_MAX + 1, n);
 			if (rc != 0)
 			{
 				exfat_put_node(ef, *parent);

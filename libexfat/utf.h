@@ -3,7 +3,7 @@
 	exFAT file system implementation library.
 
 	Free exFAT implementation.
-	Copyright (C) 2010-2016  Andrew Nayenko
+	Copyright (C) 2010-2017  Andrew Nayenko
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ static inline int utf16_to_utf8(char* output, const le16_t* input, size_t outsiz
 	char* outp = output;
 	wchar_t wc;
 
-	while (inp - input < insize && le16_to_cpu(*inp))
+	while (inp - input < insize)
 	{
 		inp = utf16_to_wchar(inp, &wc, insize - (inp - input));
 		if (inp == NULL)
@@ -122,6 +122,13 @@ static inline int utf16_to_utf8(char* output, const le16_t* input, size_t outsiz
 			exfat_error("name is too long");
 			return -ENAMETOOLONG;
 		}
+		if (wc == 0)
+			return 0;
+	}
+	if (outp - output >= outsize)
+	{
+		exfat_error("name is too long");
+		return -ENAMETOOLONG;
 	}
 	*outp = '\0';
 	return 0;
@@ -202,7 +209,7 @@ static le16_t* wchar_to_utf16(le16_t* output, wchar_t wc, size_t outsize)
 	le16_t* outp = output;
 	wchar_t wc;
 
-	while (inp - input < insize && *inp)
+	while (inp - input < insize)
 	{
 		inp = utf8_to_wchar(inp, &wc, insize - (inp - input));
 		if (inp == NULL)
@@ -216,6 +223,13 @@ static le16_t* wchar_to_utf16(le16_t* output, wchar_t wc, size_t outsize)
 			exfat_error("name is too long");
 			return -ENAMETOOLONG;
 		}
+		if (wc == 0)
+			break;
+	}
+	if (outp - output >= outsize)
+	{
+		exfat_error("name is too long");
+		return -ENAMETOOLONG;
 	}
 	*outp = cpu_to_le16(0);
 	return 0;

@@ -3,7 +3,7 @@
 #	Autoconf source.
 #
 #	Free exFAT implementation.
-#	Copyright (C) 2010-2016  Andrew Nayenko
+#	Copyright (C) 2010-2017  Andrew Nayenko
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #
 
 AC_INIT([Free exFAT implementation],
-	[1.2.4],
+	[1.2.7],
 	[relan@users.noreply.github.com],
 	[exfat],
 	[https://github.com/relan/exfat])

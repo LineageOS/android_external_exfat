@@ -3,7 +3,7 @@
 	FUSE-based exFAT implementation. Requires FUSE 2.6 or later.
 
 	Free exFAT implementation.
-	Copyright (C) 2010-2016  Andrew Nayenko
+	Copyright (C) 2010-2017  Andrew Nayenko
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -104,17 +104,17 @@ static int fuse_exfat_readdir(const char* path, void* buffer,
 	struct exfat_node* node;
 	struct exfat_iterator it;
 	int rc;
-	char name[UTF8_BYTES(EXFAT_NAME_MAX) + 1];
+	char name[EXFAT_UTF8_NAME_BUFFER_MAX];
 
 	exfat_debug("[%s] %s", __func__, path);
 
 	rc = exfat_lookup(&ef, &parent, path);
 	if (rc != 0)
 		return rc;
-	if (!(parent->flags & EXFAT_ATTRIB_DIR))
+	if (!(parent->attrib & EXFAT_ATTRIB_DIR))
 	{
 		exfat_put_node(&ef, parent);
-		exfat_error("'%s' is not a directory (0x%x)", path, parent->flags);
+		exfat_error("'%s' is not a directory (%#hx)", path, parent->attrib);
 		return -ENOTDIR;
 	}
 
@@ -128,11 +128,11 @@ static int fuse_exfat_readdir(const char* path, void* buffer,
 		exfat_error("failed to open directory '%s'", path);
 		return rc;
 	}
-	while ((node = exfat_readdir(&ef, &it)))
+	while ((node = exfat_readdir(&it)))
 	{
-		exfat_get_name(node, name, sizeof(name) - 1);
+		exfat_get_name(node, name);
 		exfat_debug("[%s] %s: %s, %"PRId64" bytes, cluster 0x%x", __func__,
-				name, IS_CONTIGUOUS(*node) ? "contiguous" : "fragmented",
+				name, node->is_contiguous ? "contiguous" : "fragmented",
 				node->size, node->start_cluster);
 		filler(buffer, name, NULL, 0);
 		exfat_put_node(&ef, node);
@@ -218,25 +218,15 @@ static int fuse_exfat_fsync(const char* path, int datasync,
 static int fuse_exfat_read(const char* path, char* buffer, size_t size,
 		off_t offset, struct fuse_file_info* fi)
 {
-	ssize_t ret;
-
 	exfat_debug("[%s] %s (%zu bytes)", __func__, path, size);
-	ret = exfat_generic_pread(&ef, get_node(fi), buffer, size, offset);
-	if (ret < 0)
-		return -EIO;
-	return ret;
+	return exfat_generic_pread(&ef, get_node(fi), buffer, size, offset);
 }
 
 static int fuse_exfat_write(const char* path, const char* buffer, size_t size,
 		off_t offset, struct fuse_file_info* fi)
 {
-	ssize_t ret;
-
 	exfat_debug("[%s] %s (%zu bytes)", __func__, path, size);
-	ret = exfat_generic_pwrite(&ef, get_node(fi), buffer, size, offset);
-	if (ret < 0)
-		return -EIO;
-	return ret;
+	return exfat_generic_pwrite(&ef, get_node(fi), buffer, size, offset);
 }
 
 static int fuse_exfat_unlink(const char* path)
@@ -538,7 +528,7 @@ int main(int argc, char* argv[])
 			break;
 		case 'V':
 			free(mount_options);
-			puts("Copyright (C) 2010-2016  Andrew Nayenko");
+			puts("Copyright (C) 2010-2017  Andrew Nayenko");
 			return 0;
 		case 'v':
 			break;

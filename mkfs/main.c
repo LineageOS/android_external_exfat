@@ -3,7 +3,7 @@
 	Creates exFAT file system.
 
 	Free exFAT implementation.
-	Copyright (C) 2011-2016  Andrew Nayenko
+	Copyright (C) 2011-2017  Andrew Nayenko
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ static int setup_volume_label(le16_t label[EXFAT_ENAME_MAX + 1], const char* s)
 	memset(label, 0, (EXFAT_ENAME_MAX + 1) * sizeof(le16_t));
 	if (s == NULL)
 		return 0;
-	return utf8_to_utf16(label, s, EXFAT_ENAME_MAX, strlen(s));
+	return utf8_to_utf16(label, s, EXFAT_ENAME_MAX + 1, strlen(s));
 }
 
 static uint32_t setup_volume_serial(uint32_t user_defined)
@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 			}
 			break;
 		case 'V':
-			puts("Copyright (C) 2011-2016  Andrew Nayenko");
+			puts("Copyright (C) 2011-2017  Andrew Nayenko");
 			return 0;
 		default:
 			usage(argv[0]);

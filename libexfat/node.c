@@ -507,7 +507,7 @@ static int readdir(struct exfat* ef, struct exfat_node* parent,
 				exfat_error("too long label (%hhu chars)", label->length);
 				return -EIO;
 			}
-			if (utf16_to_utf8(ef->label, label->name,
+			if (exfat_utf16_to_utf8(ef->label, label->name,
 						sizeof(ef->label), EXFAT_ENAME_MAX) != 0)
 				return -EIO;
 			break;
@@ -1201,7 +1201,7 @@ int exfat_set_label(struct exfat* ef, const char* label)
 	struct exfat_entry_label entry;
 
 	memset(label_utf16, 0, sizeof(label_utf16));
-	rc = utf8_to_utf16(label_utf16, label, EXFAT_ENAME_MAX + 1, strlen(label));
+	rc = exfat_utf8_to_utf16(label_utf16, label, EXFAT_ENAME_MAX + 1, strlen(label));
 	if (rc != 0)
 		return rc;
 

@@ -75,3 +75,21 @@ cc_binary {
     local_include_dirs: ["label"],
     static_libs: ["libexfat"],
 }
+
+// Libraries for recovery
+
+cc_library_static {
+    name: "libexfat_mkfs",
+    defaults: ["exfat_defaults"],
+    srcs: ["mkfs/*.c"],
+    cflags: ["-Dmain=mkfs_exfat_main"],
+    static_libs: ["libexfat"],
+}
+
+cc_library_static {
+    name: "libexfat_fsck",
+    defaults: ["exfat_defaults"],
+    srcs: ["fsck/main.c"],
+    cflags: ["-Dmain=fsck_exfat_main"],
+    static_libs: ["libexfat"],
+}

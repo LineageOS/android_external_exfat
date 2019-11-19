@@ -23,6 +23,7 @@ cc_defaults {
     cflags: [
         "-std=gnu99",
         "-Wno-error",
+        "-Wno-unused-parameter",
         "-D_FILE_OFFSET_BITS=64",
         "-DPACKAGE=\"exfat\"",
         "-DVERSION=\"1.3.0\"",
